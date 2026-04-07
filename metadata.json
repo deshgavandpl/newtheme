@@ -1,0 +1,7 @@
+{
+  "name": "Apna Cricket full web",
+  "description": "A Gen-Z powered cricket platform for local talent discovery, real-time scoring, and player digital identities.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

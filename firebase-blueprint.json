@@ -1,0 +1,137 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and role information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "player", "scout"] },
+        "bio": { "type": "string" },
+        "location": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "stats": { "$ref": "PlayerStats" }
+      },
+      "required": ["uid", "displayName", "email", "role"]
+    },
+    "Tournament": {
+      "title": "Tournament",
+      "description": "Details of a cricket tournament.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "location": { "type": "string" },
+        "startDate": { "type": "string", "format": "date-time" },
+        "endDate": { "type": "string", "format": "date-time" },
+        "adminId": { "type": "string" },
+        "status": { "type": "string", "enum": ["upcoming", "ongoing", "completed"] },
+        "bannerUrl": { "type": "string" },
+        "teams": { "type": "array", "items": { "type": "string" } },
+        "prizePool": { "type": "string" }
+      },
+      "required": ["name", "adminId", "status"]
+    },
+    "Match": {
+      "title": "Match",
+      "description": "Details of a specific match.",
+      "type": "object",
+      "properties": {
+        "tournamentId": { "type": "string" },
+        "teamA": { 
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "score": { "type": "integer" },
+            "wickets": { "type": "integer" },
+            "overs": { "type": "string" }
+          }
+        },
+        "teamB": { 
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "score": { "type": "integer" },
+            "wickets": { "type": "integer" },
+            "overs": { "type": "string" }
+          }
+        },
+        "status": { "type": "string", "enum": ["scheduled", "live", "finished", "abandoned"] },
+        "venue": { "type": "string" },
+        "matchDate": { "type": "string", "format": "date-time" },
+        "adminId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "oversLimit": { "type": "integer" },
+        "toss": { "type": "string" },
+        "winner": { "type": "string" }
+      },
+      "required": ["teamA", "teamB", "status", "adminId"]
+    },
+    "PlayerStats": {
+      "title": "PlayerStats",
+      "description": "Aggregated stats for a player.",
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string" },
+        "batting": {
+          "type": "object",
+          "properties": {
+            "matches": { "type": "integer" },
+            "runs": { "type": "integer" },
+            "highestScore": { "type": "integer" },
+            "average": { "type": "number" },
+            "strikeRate": { "type": "number" }
+          }
+        },
+        "bowling": {
+          "type": "object",
+          "properties": {
+            "wickets": { "type": "integer" },
+            "economy": { "type": "number" },
+            "bestBowling": { "type": "string" }
+          }
+        }
+      },
+      "required": ["playerId"]
+    },
+    "MatchEvent": {
+      "title": "MatchEvent",
+      "description": "A single event in a match (ball by ball).",
+      "type": "object",
+      "properties": {
+        "over": { "type": "integer" },
+        "ball": { "type": "integer" },
+        "batsmanId": { "type": "string" },
+        "bowlerId": { "type": "string" },
+        "runs": { "type": "integer" },
+        "isWicket": { "type": "boolean" },
+        "commentary": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile documents."
+    },
+    "/tournaments/{tournamentId}": {
+      "schema": "Tournament",
+      "description": "Tournament metadata."
+    },
+    "/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Standalone or tournament matches."
+    },
+    "/matches/{matchId}/events": {
+      "schema": "MatchEvent",
+      "description": "Ball-by-ball events for a match."
+    },
+    "/players/{playerId}/stats": {
+      "schema": "PlayerStats",
+      "description": "Global stats for individual players."
+    }
+  }
+}
